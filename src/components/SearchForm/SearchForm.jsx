@@ -17,7 +17,9 @@ export class SearchForm extends Component {
 
   onFormSubmit = e => {
     e.preventDefault();
+
     this.props.onSubmit(this.state.searchQuery);
+
     this.setState({
       searchQuery: '',
     });
@@ -27,9 +29,17 @@ export class SearchForm extends Component {
     const { searchQuery } = this.state;
     return (
       <SearchFormStyled onSubmit={this.onFormSubmit}>
-        <InputSearch value={searchQuery} onChange={this.onQueryInputChange} />
+        <InputSearch
+          value={searchQuery}
+          onChange={this.onQueryInputChange}
+          placeholder="What do you want to write?"
+          name="search"
+          required
+          autoFocus
+        />
+
         <FormBtn>
-          <FiSearch />
+          <FiSearch size="16" />
         </FormBtn>
       </SearchFormStyled>
     );

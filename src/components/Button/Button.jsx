@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { Button as ButtonStyled } from './Button.styled';
-export default class Button extends Component {
+export class Button extends Component {
   render() {
-    const { onLoadMore } = this.props;
-    return <ButtonStyled onClick={onLoadMore}>Load more</ButtonStyled>;
+    const { onLoadMoreClick } = this.props;
+    return (
+      <ButtonStyled type="button" onClick={onLoadMoreClick}>
+        Load more
+      </ButtonStyled>
+    );
   }
 }

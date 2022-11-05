@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import { CardItem } from './ImageCard.styled';
 
-export default class ImageCard extends Component {
+export class ImageCard extends Component {
   render() {
-    const { src, alt } = this.props;
+    const { src, alt, onModalOpenClick } = this.props;
     return (
       <CardItem>
-        <img src={src} alt={alt} />
+        <img
+          style={{ cursor: 'zoom-in' }}
+          src={src}
+          alt={alt}
+          onClick={() => {
+            onModalOpenClick({ alt, src });
+          }}
+        />
       </CardItem>
     );
   }
