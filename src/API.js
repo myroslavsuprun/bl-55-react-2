@@ -11,8 +11,5 @@ axios.defaults.params = {
 
 export const getImages = async (query, page) => {
   const { data } = await axios.get(`search?query=${query}&page=${page}`);
-
-  return data.photos;
+  return data;
 };
-
-// https://api.pexels.com/v1/search?query=car/
