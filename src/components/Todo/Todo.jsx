@@ -1,14 +1,14 @@
+import { Component } from 'react';
+
 import { Text } from 'components';
 import { TodoWrapper, DeleteButton, EditButton } from './Todo.styled';
 import { RiDeleteBinLine, RiEdit2Line } from 'react-icons/ri';
 
-export const Todo = ({ text, id, number, onDelete, onEdit }) => {
-  return (
-    <TodoWrapper>
-      <Text textAlign="center" marginBottom="20px">
-        TODO #{number}
-      </Text>
-      <Text>{text}</Text>
+export class Todo extends Component {
+  render() {
+    const { text, id, number, onDelete, onEdit } = this.props;
+
+    const deleteButton = (
       <DeleteButton
         type="button"
         onClick={() => {
@@ -17,6 +17,9 @@ export const Todo = ({ text, id, number, onDelete, onEdit }) => {
       >
         <RiDeleteBinLine size={24} />
       </DeleteButton>
+    );
+
+    const editButton = (
       <EditButton
         type="button"
         onClick={() => {
@@ -25,6 +28,17 @@ export const Todo = ({ text, id, number, onDelete, onEdit }) => {
       >
         <RiEdit2Line size={24} />
       </EditButton>
-    </TodoWrapper>
-  );
-};
+    );
+
+    return (
+      <TodoWrapper>
+        <Text textAlign="center" marginBottom="20px">
+          TODO #{number}
+        </Text>
+        <Text>{text}</Text>
+        {deleteButton}
+        {editButton}
+      </TodoWrapper>
+    );
+  }
+}

@@ -5,8 +5,8 @@ import { SearchFormStyled, FormBtn, InputSearch } from 'components';
 import { BtnEdit } from './EditForm.styled';
 import { useState } from 'react';
 
-export const EditForm = ({ currentTodo, onSubmit, onCancel, onChange }) => {
-  const [inputValue, setInputValue] = useState(currentTodo.text);
+export const EditForm = ({ editingTask, onSubmit, onCancel, onChange }) => {
+  const [inputValue, setInputValue] = useState(editingTask.text);
 
   const onInputChange = e => {
     const value = e.target.value;

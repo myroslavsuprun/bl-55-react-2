@@ -1,89 +1,74 @@
 import { Component } from 'react';
-import { nanoid } from 'nanoid';
 import { Grid, GridItem, SearchForm, EditForm, Text, Todo } from 'components';
 
-export class Todos extends Component {
+import { connect } from 'react-redux';
+import { addTask, deleteTask, editTask } from 'redux/tasksSlice';
+
+class Todos extends Component {
   state = {
-    todos: JSON.parse(localStorage.getItem('todos')) || [],
     isEditing: false,
-    currentTodo: {},
+    editingTask: {},
   };
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.todos === this.state.todos) return;
+  onTaskDelete = id => {
+    const { deleteTask } = this.props;
+    const { isEditing } = this.state;
 
-    localStorage.setItem('todos', JSON.stringify(this.state.todos) || []);
-  }
+    if (isEditing) {
+      this.toggleEditForm();
+      this.clearEditingTask();
+    }
 
-  onSearchFormSubmit = text => {
-    const newTodo = { text, id: nanoid() };
-    this.setState(prevState => ({ todos: [...prevState.todos, newTodo] }));
-  };
-
-  onTodoDeleteClick = id => {
-    const todos = this.state.todos.filter(({ id: stateId }) => {
-      if (stateId === id) {
-        return false;
-      }
-
-      return true;
-    });
-
-    this.setState({
-      todos,
-    });
+    deleteTask(id);
   };
 
   onTodoEditClick = id => {
-    const currentTodo = this.state.todos.find(({ id: stateId }) => {
-      if (stateId === id) {
-        return true;
-      }
-      return false;
+    const editingTask = this.props.tasks.find(({ id: stateId }) => {
+      return stateId === id;
     });
 
     this.setState({
-      currentTodo,
+      editingTask,
     });
 
     this.toggleEditForm();
+  };
+
+  onEditFormSubmit = () => {
+    const { editingTask } = this.state;
+    const { editTask } = this.props;
+
+    editTask(editingTask);
+    this.toggleEditForm();
+  };
+
+  onEditFormCancel = () => {
+    this.toggleEditForm();
+    this.clearEditingTask();
+  };
+
+  onEditFormChange = text => {
+    this.setState(prevState => ({
+      editingTask: { text, id: prevState.editingTask.id },
+    }));
   };
 
   toggleEditForm = () => {
     this.setState(prevState => ({ isEditing: !prevState.isEditing }));
   };
 
-  onEditFormCancel = () => {
-    this.toggleEditForm();
+  clearEditingTask = () => {
     this.setState({
-      currentTodo: {},
+      editingTask: {},
     });
-  };
-
-  onEditFormChange = text => {
-    this.setState(prevState => ({
-      currentTodo: { text, id: prevState.currentTodo.id },
-    }));
-  };
-
-  onEditFormSubmit = () => {
-    const todos = this.state.todos.filter(todo => {
-      if (this.state.currentTodo.id === todo.id) return false;
-
-      return true;
-    });
-
-    this.setState(prevState => ({
-      todos: [...todos, prevState.currentTodo],
-    }));
-    this.toggleEditForm();
   };
 
   render() {
-    const { todos, isEditing, currentTodo } = this.state;
+    const { isEditing, editingTask } = this.state;
+    const { tasks, addTask } = this.props;
 
     const renderTodo = () => {
-      if (todos.length <= 0) {
+      if (tasks.length <= 0) {
         return (
           <Text textAlign="center">Nothing has been added here yet 😟</Text>
         );
@@ -91,13 +76,13 @@ export class Todos extends Component {
 
       return (
         <Grid>
-          {todos.map(({ text, id }, index) => (
+          {tasks.map(({ text, id }, index) => (
             <GridItem key={id}>
               <Todo
                 text={text}
                 id={id}
                 number={index + 1}
-                onDelete={this.onTodoDeleteClick}
+                onDelete={this.onTaskDelete}
                 onEdit={this.onTodoEditClick}
               />
             </GridItem>
@@ -110,16 +95,27 @@ export class Todos extends Component {
       <>
         {isEditing ? (
           <EditForm
-            currentTodo={currentTodo}
+            editingTask={editingTask}
             onSubmit={this.onEditFormSubmit}
             onCancel={this.onEditFormCancel}
             onChange={this.onEditFormChange}
           />
         ) : (
-          <SearchForm onSubmit={this.onSearchFormSubmit} />
+          <SearchForm onSubmit={addTask} />
         )}
         {renderTodo()}
       </>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  tasks: state.tasks.tasks,
+});
+
+const TodosWrapped = connect(mapStateToProps, {
+  addTask,
+  deleteTask,
+  editTask,
+})(Todos);
+export { TodosWrapped as Todos };
